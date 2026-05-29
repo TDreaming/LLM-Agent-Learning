@@ -1,0 +1,18 @@
+{
+  "venvPath": "projects",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "extraPaths": [
+    "projects/.venv/lib/python3.12/site-packages",
+    "projects"
+  ],
+  "include": [
+    "projects"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.venv"
+  ],
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": "warning"
+}
