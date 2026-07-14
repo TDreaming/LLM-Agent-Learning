@@ -1,0 +1,32 @@
+# agent_config.yaml —— 统一声明 agents / tools / mcp 的装配与开关
+#
+# 职责分离：本文件只管「组件装配与开关」；密钥/敏感项（MODEL_NAME、ARK_API_KEY、
+# 数据目录等）仍由 .env / config.py 负责，切勿写入此文件。
+#
+# 约定：
+# - 仅 enabled: true 的条目会被实例化并装配；enabled: false 或缺省视为关闭。
+# - 未在注册表登记的 name 会被告警跳过（优雅降级），不阻断服务启动。
+# - 运行期修改本文件并保存，服务会在 1 秒内感知并热加载到运行中的 Agent。
+version: 1
+
+# 子代理（专家 SubAgent）：name 必须与注册表登记的内置 agent 对应
+agents:
+  - name: diagnostics_agent
+    enabled: true
+  - name: remediation_agent
+    enabled: true
+  - name: communicator_agent
+    enabled: true
+
+# 挂载到 Supervisor 自身的内置工具（FunctionTool）
+tools:
+  - name: load_skill        # 自定义 Skill 渐进式披露入口（仅在存在自定义 Skill 时生效）
+    enabled: true
+
+# MCP server：每个条目对应一个可启停的 McpToolset
+mcp:
+  - name: filesystem
+    enabled: false
+    args:
+      # root_dir 可选；缺省时取 settings.runbooks_dir
+      root_dir: ""

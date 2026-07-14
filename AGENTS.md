@@ -13,6 +13,7 @@ This repository records learning paths, notes, and resources related to LLMs, AI
 - `projects/`: Runnable Agent examples that compare frameworks.
   - `projects/base_chart_langgraph/`: A LangGraph ReAct chatbot example.
   - `projects/base_workflow_agent/`: A google-adk multi-stage Human-in-the-Loop workflow example.
+  - `projects/devops_agent/`: An enterprise-grade google-adk DevOps/AIOps agent example.
   - `projects/requirements.txt`: Pinned dependencies (Python >=3.12,<3.13).
 - `assets/`: Images used by the docs (e.g. the architecture whiteboard).
 - `pyrightconfig.json`: Pyright/Pylance config pointing at the `projects/.venv` interpreter.
@@ -27,6 +28,18 @@ This repository records learning paths, notes, and resources related to LLMs, AI
   current stage with the original request + previous output + feedback). State is persisted via
   `session.state` (`EventActions.state_delta`), and `LocalFileMemoryService` stores memory in a
   local JSON file. The Doubao model is reached through `LiteLlm`. Entry: `agent.py`.
+- `devops_agent`: An enterprise-grade DevOps/AIOps agent. A `devops_supervisor` root agent routes to
+  three expert sub-agents (`diagnostics_agent` / `remediation_agent` / `communicator_agent`). Ops
+  skills run through Ports & Adapters (`providers.py`, default read-only `MockAdapter`). Production
+  guardrails (`guardrails.py`) gate dangerous/write ops behind an HITL approval token, feed rejection
+  reasons back to the LLM, audit every tool call, and enforce a call budget. Structured stdout logging
+  + audit (`observability.py`), persistent local-JSON memory (`memory.py`), and optional filesystem
+  MCP (`mcp_tools.py`, graceful degradation). Reusable prompt fragments live in `prompts.py`.
+  Component assembly (agents/tools/mcp enable-disable) is declared in a unified `agent_config.yaml`,
+  parsed by `component_config.py`, wired via a `registry.py`, and **hot-reloaded** within 1s by a
+  polling watcher (`hot_reload.py`) that mutates the running `root_agent` in place (secrets stay in
+  `.env`). Supports both CLI (`adk run devops_agent` / `cli.py`) and conversational Web (`adk web`).
+  Entry: `agent.py`.
 
 ## Editing Guidelines
 
